@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>ComfyUI - FORWARD UI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<!-- <link rel="stylesheet" type="text/css" href="./lib/litegraph.css" /> -->
+		<link rel="stylesheet" type="text/css" href="./lib/atlasan/litegraph.atlasan.css" />
+		<link rel="stylesheet" type="text/css" href="./style.css" />
+		<link rel="stylesheet" type="text/css" href="./user.css" />
+		<!-- <script type="text/javascript" src="./lib/litegraph.core.js"></script> -->
+
+		<script src="./lib/forward/bundle.js"></script>
+
+		<!-- <script type="module" src="./lib/forward/litegraph.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/lgraphcanvas.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/litegraph-editor.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/defaults_debug.js"></script> -->
+		
+		<!-- <script type="module" src="./lib/forward/nodes/base.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/logic.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/events.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/math.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/math3d.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/strings.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/interface.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/geometry.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/graphics.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/input.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/midi.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/audio.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/network.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/objects.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/libraries.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/html.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/nodes/others.js"></script> -->
+
+		<!-- <script type="module" src="js/demos.js"></script> -->
+		<!-- <script type="module" src="js/code.js"></script> -->
+
+		<script type="module">
+			import { LiteGraph } from "./lib/forward/litegraph.js";
+			import { LGraphCanvas } from "./lib/forward/lgraphcanvas.js";
+			window.LiteGraph = LiteGraph;
+			window.LGraphCanvas = LGraphCanvas;
+			import { app } from "./scripts/app.js";
+			
+			await app.setup();
+			window.app = app;
+			window.graph = app.graph;
+		</script>
+		
+		<!-- <script src="./lib/litegraph.extensions.js" defer></script> -->
+		
+		<!-- <script type="module" src="./lib/forward/extensions/renamer.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/extensions/autoconnect.js"></script> -->
+		<!-- <script type="module" src="./lib/forward/extensions/keyboard_helper.js"></script> -->
+
+	</head>
+	<body class="litegraph">
+		<div id="comfy-user-selection" class="comfy-user-selection" style="display: none;">
+			<main class="comfy-user-selection-inner">
+				<h1>ComfyUI</h1>
+				<form>
+					<section>
+						<label>New user:
+							<input placeholder="Enter a username" />
+						</label>
+					</section>
+					<div class="comfy-user-existing">
+						<span class="or-separator">OR</span>
+						<section>
+							<label>
+								Existing user:
+								<select>
+									<option hidden disabled selected value> Select a user </option>
+								</select>
+							</label>
+						</section>
+					</div>
+					<footer>
+						<span class="comfy-user-error">&nbsp;</span>
+						<button class="comfy-btn comfy-user-button-next">Next</button>
+					</footer>
+				</form>
+			</main>
+		</div>
+	</body>
+</html>

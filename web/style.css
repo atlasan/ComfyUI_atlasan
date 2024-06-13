@@ -2,6 +2,7 @@
 	--fg-color: #000;
 	--bg-color: #fff;
 	--comfy-menu-bg: #353535;
+	--comfy-menu-selected-bg: #444;
 	--comfy-input-bg: #222;
 	--input-text: #ddd;
 	--descrip-text: #999;
@@ -461,13 +462,13 @@ dialog::backdrop {
 .litegraph.litecontextmenu,
 .litegraph.litecontextmenu.dark {
 	z-index: 9999 !important;
-	background-color: var(--comfy-menu-bg) !important;
+	background-color: var(--comfy-menu-bg);
 	filter: brightness(95%);
 	will-change: transform;
 }
 
 .litegraph.litecontextmenu .litemenu-entry:hover:not(.disabled):not(.separator) {
-	background-color: var(--comfy-menu-bg) !important;
+	background-color: var(--comfy-menu-bg);
 	filter: brightness(155%);
 	will-change: transform;
 	color: var(--input-text);
@@ -475,8 +476,13 @@ dialog::backdrop {
 
 .litegraph.litecontextmenu .litemenu-entry.submenu,
 .litegraph.litecontextmenu.dark .litemenu-entry.submenu {
-	background-color: var(--comfy-menu-bg) !important;
+	background-color: var(--comfy-menu-bg);
 	color: var(--input-text);
+}
+
+.litegraph.litecontextmenu .litemenu-entry.submenu.selected,
+.litegraph.litecontextmenu.dark .litemenu-entry.submenu.selected {
+	background-color: var(--comfy-menu-selected-bg);
 }
 
 .litegraph.litecontextmenu input {

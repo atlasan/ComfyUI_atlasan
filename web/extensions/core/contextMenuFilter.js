@@ -7,6 +7,8 @@ const ext = {
 	init() {
 		const ctxMenu = LiteGraph.ContextMenu;
 
+		if((LiteGraph.ContextMenu.prototype.constructor+"").startsWith("class")) return;
+
 		LiteGraph.ContextMenu = function (values, options) {
 			const ctx = ctxMenu.call(this, values, options);
 
