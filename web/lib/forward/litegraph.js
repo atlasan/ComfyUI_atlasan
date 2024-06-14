@@ -203,6 +203,8 @@ export var LiteGraph = new class {
         this.allowMultiOutputForEvents = false; // being events, it is strongly reccomended to use them sequentually, one by one
 
         this.context_menu_filter_enabled = false; // [WIP!]
+        
+        this.reprocess_slot_while_node_configure = false; // reprocess inputs and output node slots comparing by name, will fix index changes, works on dynamics
 
         this.log_methods = ['error', 'warn', 'info', 'log', 'debug'];
 

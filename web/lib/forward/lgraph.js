@@ -1528,8 +1528,8 @@ export class LGraph {
 
         // copy all stored fields
         for (let i in data) {
-            if (["nodes", "groups"].includes(i)) continue; // Accepts "nodes" and "groups"
-            this[i] = data[i];
+            if (["nodes", "groups"].includes(i)) continue; // exclude "nodes" and "groups" properties from direct copy
+            this[i] = data[i]; // TODO should probably use LiteGraph.cloneObject
         }
 
         var error = false;
@@ -1826,5 +1826,37 @@ export class LGraph {
                 preferFreeSlot: true
             });
         }
+    }
+
+    updateNodeLinks(node, is_input, slots_from, slots_to){
+        LiteGraph.log_debug("lgraph","updateNodeLinks","looking for links", node.id, is_input, slots_from, slots_to)
+        
+        // cycle links
+        for (var i in this.links) {
+            var link_info = this.links[i];
+            if (link_info===null || !link_info) {
+                continue;
+            }
+            if(is_input){
+                if(link_info.target_id == node.id){
+                    // found link with target the node
+                    if(link_info.target_slot == slots_from){
+                        // found link with target the slot
+                        LiteGraph.log_debug("lgraph","updateNodeLinks","updating link input", this.links[i], node, is_input, slots_from, slots_to)
+                        this.links[i].target_slot = slots_to;
+                    }
+                }
+            }else{
+                if(link_info.origin_id == node.id){
+                    // found link with origin the node
+                    if(link_info.origin_slot == slots_from){
+                        // found link with origin the slot
+                        LiteGraph.log_debug("lgraph","updateNodeLinks","updating link output", this.links[i], node, is_input, slots_from, slots_to)
+                        this.links[i].origin_slot = slots_to;
+                    }
+                }
+            }
+        }
+
     }
 }

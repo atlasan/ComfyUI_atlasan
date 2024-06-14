@@ -156,7 +156,26 @@ export class LGraphNode {
                 return;
             }
 
+            if(LiteGraph.reprocess_slot_while_node_configure){
+                // process inputs and outputs, checking for name to handle node changes
+                if(key === "inputs" || key === "outputs"){
+                    LiteGraph.log_debug("lgraphnode", "syncObjectByProperty", key, info[key], this[key]);
+                    const resSync = this.syncObjectByProperty(info[key], this[key], "name");
+                    this[key] = resSync.ob_dest;
+                    if(resSync.keys_remap && Object.keys(resSync.keys_remap).length){
+                        if(this.graph){
+                            for(let slotFrom in resSync.keys_remap){
+                                let slotTo = resSync.keys_remap[slotFrom];
+                                this.graph.updateNodeLinks(this, key==="inputs", slotFrom, slotTo);
+                            }
+                        }
+                    }
+                    return;
+                }
+            }
             if (value === null) {
+                // CHECK THIS should copy null value key? probably should
+                LiteGraph.log_verbose("lgraphnode", "configure", "should copy null value key? probably should", key, this[key])
                 return;
             } else if (typeof value === "object") {
                 if (this[key] && typeof(this[key].configure)=="function") {
@@ -756,8 +775,9 @@ export class LGraphNode {
         }
     }
 
+    // ComfyUI compatiblity
     onResize(size){
-        // will eventually implement
+        // empty, will eventually implement
     }
 
     changeMode(modeTo) {
@@ -1734,20 +1754,20 @@ export class LGraphNode {
     /**
      * returns the output (or input) slot with a given type, -1 if not found
      * @method findSlotByType
-     * @param {boolean} input use inputs (true), or outputs (false)
+     * @param {boolean} is_input use inputs (true), or outputs (false)
      * @param {string} type the type of the slot to look for (multi type by ,) 
      * @param {boolean} returnObj if the obj itself wanted
      * @param {boolean} preferFreeSlot if we want a free slot (if not found, will return the first of the type anyway)
      * @return {number|object} the slot (-1 if not found)
      */
     findSlotByType(
-        input = false,
+        is_input = false,
         type,
         returnObj = false,
         preferFreeSlot = false,
         doNotUseOccupied = false,
     ) {
-        var aSlots = input ? this.inputs : this.outputs;
+        var aSlots = is_input ? this.inputs : this.outputs;
         if (!aSlots) {
             return -1;
         }
@@ -1975,7 +1995,7 @@ export class LGraphNode {
             }else{
                 return null; // -- break --
             }
-            
+
         }else{
             target_slot = target_node.getInputSlot(target_slot);
         }
@@ -2619,4 +2639,104 @@ export class LGraphNode {
 
         return true;
     }
+
+    /**
+ * syncObjectByProperty will ensure using the right index for node inputs and outputs when onConfigure (de-serializing) 
+    * @param {*} ob_from 
+    * @param {*} ob_dest 
+    * @param {*} property 
+    * @param {*} optsIn 
+    * @returns {object} return the result object and differences if found
+    */
+    syncObjectByProperty(ob_from, ob_dest, property, optsIn) {
+        var optsDef = {
+            only_in_source: "append",
+            // only_in_dest: "keep"
+        };
+        var opts = Object.assign({}, optsDef, optsIn);
+        
+        if (ob_from === null || !ob_from) ob_from = [];
+        if (ob_dest === null || !ob_dest) ob_dest = [];
+        var new_dest = [];
+
+        let keys_remap = {};
+
+        let only_in_target = ob_dest.filter(input => !ob_from.some(srcInput => srcInput[property] === input[property]));
+        /* if (opts.only_in_dest !== "keep") {
+            new_dest = ob_dest.filter(input => ob_from.some(srcInput => srcInput[property] === input[property]) || opts.only_in_dest === "keep");
+        } */
+
+        let sourceUsedIds = [];
+        // cycle dest, for each cycle source for matching
+        ob_dest.forEach((destInput, destIndex) => {
+            let hasChangedIndex = false;
+            let foundInSource = false;
+            ob_from.forEach((sourceInput, sourceIndex) => {
+                if(sourceUsedIds.includes(sourceIndex)){
+                    LiteGraph.log_verbose("syncObjectByProperty", "skip used slot", sourceInput, sourceIndex);
+                }else if(sourceInput[property] === destInput[property]){
+                    foundInSource = true;
+                    sourceUsedIds.push(sourceIndex);
+                    new_dest[destIndex] = LiteGraph.cloneObject(sourceInput);
+                    if(destIndex!=sourceIndex){
+                        LiteGraph.log_debug("syncObjectByProperty", "push SHIFTED", destInput[property], destInput, sourceIndex, destIndex);
+                        hasChangedIndex = true;
+                        keys_remap[sourceIndex] = destIndex;
+                    }else{
+                        LiteGraph.log_debug("syncObjectByProperty", "found same index", destInput[property], sourceInput, destIndex);
+                    }
+                }
+            });
+            if(!foundInSource && !hasChangedIndex){
+                LiteGraph.log_debug("syncObjectByProperty", "push !foundInSource",destInput[property],destInput);
+                new_dest[destIndex] = LiteGraph.cloneObject(destInput);
+            }
+        });
+
+        // check only in source
+        /* let only_in_source = ob_from.filter(input => !ob_dest.some(destInput => destInput[property] === input[property]));
+        if (opts.only_in_source === "append" && only_in_source.length) {
+            LiteGraph.log_debug("syncObjectByProperty", "push only_in_source", only_in_source);
+            new_dest.push(...only_in_source);
+        } */
+        let destUsedIds = [];
+        // cycle source, for each cycle dest
+        let only_in_source = [];
+        ob_from.forEach((sourceInput, sourceIndex) => {
+            let foundInDest = false;
+            ob_dest.forEach((destInput, destIndex) => {
+                if(destUsedIds.includes(destIndex)){
+                    LiteGraph.log_verbose("syncObjectByProperty", "only_in_source", "skip checked slot", sourceInput, sourceIndex);
+                }else if(sourceInput[property] === destInput[property]){
+                    destUsedIds.push(destIndex);
+                    foundInDest = true;
+                }
+            });
+            if(!foundInDest){
+                LiteGraph.log_debug("syncObjectByProperty", "push only_in_source",sourceInput[property],sourceInput);
+                new_dest.push(LiteGraph.cloneObject(sourceInput));
+                keys_remap[sourceIndex] = new_dest.length-1;
+                only_in_source.push(sourceInput);
+            }
+        });
+
+
+        LiteGraph.log_info("lgraphnode", "syncByProperty", {
+            only_in_source: only_in_source,
+            only_in_target: only_in_target,
+            ob_from: ob_from,
+            ob_dest: ob_dest,
+            new_dest: new_dest,
+            keys_remap: keys_remap,
+        });
+
+        return {
+            ob_dest: new_dest,
+            keys_remap: keys_remap,
+            only_in_source: only_in_source,
+            only_in_target: only_in_target,
+        };
+    }
+
+
 }
