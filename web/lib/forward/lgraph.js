@@ -71,7 +71,7 @@ export class LGraph {
         // safe clear
         this._nodes?.forEach((node) => {
             node.processCallbackHandlers("onRemoved",{
-                def_db: node.onRemoved
+                def_cb: node.onRemoved
             });
         });
 
@@ -201,7 +201,7 @@ export class LGraph {
 
         this.status = LGraph.STATUS_RUNNING;
         this.processCallbackHandlers("onPlayEvent",{
-            def_db: this.onPlayEvent
+            def_cb: this.onPlayEvent
         });
         this.sendEventToAllNodes("onStart");
 
@@ -214,11 +214,11 @@ export class LGraph {
             }
             window.requestAnimationFrame(onAnimationFrame);
             this.processCallbackHandlers("onBeforeStep",{
-                def_db: this.onBeforeStep
+                def_cb: this.onBeforeStep
             });
             this.runStep(1, !this.catch_errors);
             this.processCallbackHandlers("onAfterStep",{
-                def_db: this.onAfterStep
+                def_cb: this.onAfterStep
             });
         };
 
@@ -228,11 +228,11 @@ export class LGraph {
         } else {
             this.execution_timer_id = setInterval(() => {
                 this.processCallbackHandlers("onBeforeStep",{
-                    def_db: this.onBeforeStep
+                    def_cb: this.onBeforeStep
                 });
                 this.runStep(1, !this.catch_errors);
                 this.processCallbackHandlers("onAfterStep",{
-                    def_db: this.onAfterStep
+                    def_cb: this.onAfterStep
                 });
             }, interval);
         }
@@ -248,7 +248,7 @@ export class LGraph {
         }
         this.status = LGraph.STATUS_STOPPED;
         this.processCallbackHandlers("onStopEvent",{
-            def_db: this.onStopEvent
+            def_cb: this.onStopEvent
         });
         if (this.execution_timer_id != null) {
             if (this.execution_timer_id != -1) {
@@ -291,11 +291,11 @@ export class LGraph {
 
                 this.fixedtime += this.fixedtime_lapse;
                 this.processCallbackHandlers("onExecuteStep",{
-                    def_db: this.onExecuteStep
+                    def_cb: this.onExecuteStep
                 });
             }
             this.processCallbackHandlers("onAfterExecute",{
-                def_db: this.onAfterExecute
+                def_cb: this.onAfterExecute
             });
         } else { // catch errors
             try {
@@ -312,12 +312,12 @@ export class LGraph {
 
                     this.fixedtime += this.fixedtime_lapse;
                     this.processCallbackHandlers("onExecuteStep",{
-                        def_db: this.onExecuteStep
+                        def_cb: this.onExecuteStep
                     });
                 }
 
                 this.processCallbackHandlers("onAfterExecute",{
-                    def_db: this.onAfterExecute
+                    def_cb: this.onAfterExecute
                 });
                 this.errors_in_execution = false;
             } catch (err) {
@@ -785,7 +785,7 @@ export class LGraph {
         this._nodes_by_id[node.id] = node;
 
         node.processCallbackHandlers("onAdded",{
-            def_db: node.onAdded
+            def_cb: node.onAdded
         }, this);
 
         if (this.config.align_to_grid) {
@@ -797,7 +797,7 @@ export class LGraph {
         }
 
         this.processCallbackHandlers("onNodeAdded",{
-            def_db: this.onNodeAdded
+            def_cb: this.onNodeAdded
         }, node);
 
         if (opts.doCalcSize) {
@@ -861,7 +861,7 @@ export class LGraph {
 
         // callback
         node.processCallbackHandlers("onRemoved",{
-            def_db: node.onRemoved
+            def_cb: node.onRemoved
         }, this);
 
         node.graph = null;
@@ -887,7 +887,7 @@ export class LGraph {
         delete this._nodes_by_id[node.id];
 
         this.processCallbackHandlers("onNodeRemoved",{
-            def_db: this.onNodeRemoved
+            def_cb: this.onNodeRemoved
         }, node);
 
         this.onGraphChanged({action: "nodeRemove"});
@@ -1036,7 +1036,7 @@ export class LGraph {
         LiteGraph.log_debug("lgraph","trigger",action, param);
         // this.onTrigger?.(action, param);
         this.processCallbackHandlers("onTrigger",{
-            def_db: this.onTrigger
+            def_cb: this.onTrigger
         }, action, param);
     }
 
@@ -1059,10 +1059,10 @@ export class LGraph {
         this.onGraphChanged({action: "addInput"});
         this.afterChange();
         this.processCallbackHandlers("onInputAdded",{
-            def_db: this.onInputAdded
+            def_cb: this.onInputAdded
         }, name, type);
         this.processCallbackHandlers("onInputsOutputsChange",{
-            def_db: this.onInputsOutputsChange
+            def_cb: this.onInputsOutputsChange
         });
     }
 
@@ -1119,10 +1119,10 @@ export class LGraph {
         this.onGraphChanged({action: "renameInput"});
 
         this.processCallbackHandlers("onInputRenamed",{
-            def_db: this.onInputRenamed
+            def_cb: this.onInputRenamed
         }, old_name, name);
         this.processCallbackHandlers("onInputsOutputsChange",{
-            def_db: this.onInputsOutputsChange
+            def_cb: this.onInputsOutputsChange
         });
     }
 
@@ -1148,10 +1148,10 @@ export class LGraph {
         this.inputs[name].type = type;
         this.onGraphChanged({action: "changeInputType"});
         this.processCallbackHandlers("onInputTypeChanged",{
-            def_db: this.onInputTypeChanged
+            def_cb: this.onInputTypeChanged
         }, name, type);
         this.processCallbackHandlers("onInputsOutputsChange",{
-            def_db: this.onInputsOutputsChange
+            def_cb: this.onInputsOutputsChange
         });
     }
 
@@ -1170,10 +1170,10 @@ export class LGraph {
         this.onGraphChanged({action: "graphRemoveInput"});
 
         this.processCallbackHandlers("onInputRemoved",{
-            def_db: this.onInputRemoved
+            def_cb: this.onInputRemoved
         }, name);
         this.processCallbackHandlers("onInputsOutputsChange",{
-            def_db: this.onInputsOutputsChange
+            def_cb: this.onInputsOutputsChange
         });
         return true;
     }
@@ -1190,10 +1190,10 @@ export class LGraph {
         this.onGraphChanged({action: "addOutput"});
 
         this.processCallbackHandlers("onOutputAdded",{
-            def_db: this.onOutputAdded
+            def_cb: this.onOutputAdded
         }, name, type);
         this.processCallbackHandlers("onInputsOutputsChange",{
-            def_db: this.onInputsOutputsChange
+            def_cb: this.onInputsOutputsChange
         });
     }
 
@@ -1246,10 +1246,10 @@ export class LGraph {
         this._version++;
 
         this.processCallbackHandlers("onOutputRenamed",{
-            def_db: this.onOutputRenamed
+            def_cb: this.onOutputRenamed
         }, old_name, name);
         this.processCallbackHandlers("onInputsOutputsChange",{
-            def_db: this.onInputsOutputsChange
+            def_cb: this.onInputsOutputsChange
         });
     }
 
@@ -1275,10 +1275,10 @@ export class LGraph {
         this.outputs[name].type = type;
         this.onGraphChanged({action: "changeOutputType"});
         this.processCallbackHandlers("onOutputTypeChanged",{
-            def_db: this.onOutputTypeChanged
+            def_cb: this.onOutputTypeChanged
         }, name, type);
         this.processCallbackHandlers("onInputsOutputsChange",{
-            def_db: this.onInputsOutputsChange
+            def_cb: this.onInputsOutputsChange
         });
     }
 
@@ -1295,10 +1295,10 @@ export class LGraph {
         this.onGraphChanged({action: "removeOutput"});
 
         this.processCallbackHandlers("onOutputRemoved",{
-            def_db: this.onOutputRemoved
+            def_cb: this.onOutputRemoved
         }, name);
         this.processCallbackHandlers("onInputsOutputsChange",{
-            def_db: this.onInputsOutputsChange
+            def_cb: this.onInputsOutputsChange
         });
         return true;
     }
@@ -1336,7 +1336,7 @@ export class LGraph {
      */
     beforeChange(info) {
         this.processCallbackHandlers("onBeforeChange",{
-            def_db: this.onBeforeChange
+            def_cb: this.onBeforeChange
         }, this, info);
         this.sendActionToCanvas("onBeforeChange", this);
     }
@@ -1348,7 +1348,7 @@ export class LGraph {
      */
     afterChange(info) {
         this.processCallbackHandlers("onAfterChange",{
-            def_db: this.onAfterChange
+            def_cb: this.onAfterChange
         }, this, info);
         this.sendActionToCanvas("onAfterChange", this);
     }
@@ -1362,7 +1362,7 @@ export class LGraph {
     connectionChange(node) {
         this.updateExecutionOrder();
         this.processCallbackHandlers("onConnectionChange",{
-            def_db: this.onConnectionChange
+            def_cb: this.onConnectionChange
         }, node);
         this.onGraphChanged({action: "connectionChange", doSave: false});
         this.sendActionToCanvas("onConnectionChange");
@@ -1409,7 +1409,7 @@ export class LGraph {
         LiteGraph.log_verbose("lgraph", "change", "Graph visually changed");
         this.sendActionToCanvas("setDirty", [true, true]);
         this.processCallbackHandlers("on_change",{ // name refactor ? is this being used ?
-            def_db: this.on_change
+            def_cb: this.on_change
         }, this);
     }
 
@@ -1485,7 +1485,7 @@ export class LGraph {
             version: LiteGraph.VERSION,
         };
         this.processCallbackHandlers("onSerialize",{
-            def_db: this.onSerialize
+            def_cb: this.onSerialize
         }, data);
         
         LiteGraph.log_verbose("lgraph","serialize",data);
@@ -1577,7 +1577,7 @@ export class LGraph {
         this.extra = data.extra ?? {};
 
         this.processCallbackHandlers("onConfigure",{
-            def_db: this.onConfigure
+            def_cb: this.onConfigure
         }, data);
 
         // TODO implement: when loading (configuring) a whole graph, skip calling graphChanged on every single configure
