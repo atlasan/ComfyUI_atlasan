@@ -3,6 +3,7 @@
  * press a than click on a node
  */
 
+// import { LiteGraph } from "../litegraph.js";
 
 if(LiteGraph && graphcanvas) (function(){
     // enable only if debugging CallbackHandler itself
@@ -14,11 +15,10 @@ if(LiteGraph && graphcanvas) (function(){
     let debug = false;
 
     // onKeyDown
-    graphcanvas.registerCallbackHandler("onKeyDown",function(oCbInfo, keyEvent){
+    const cbP = graphcanvas.registerCallbackHandler("onKeyDown",function(oCbInfo, keyEvent){
         if(debug) console.info(ext, "*** onKeyDown handler ***", ...arguments);
         switch(keyEvent.keyCode){
             case 65: // a
-
                 // check selected nodes
                 let nSel = Object.keys(graphcanvas.selected_nodes).length;
                 var aNodesFrom = [];
@@ -53,4 +53,6 @@ if(LiteGraph && graphcanvas) (function(){
         }
     });
 
-})();
+    console.info("LGext","autoconnect","onKeyDown CBH registered",cbP);
+
+})(); else console.warn("no LiteGraph or graphcanvas");

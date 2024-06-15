@@ -3,8 +3,8 @@
 // giving ability to show and edit graphcanvas options
 
 
-import { LiteGraph } from "../litegraph.js";
-import { LGraphCanvas } from "../lgraphcanvas.js";
+// import { LiteGraph } from "../litegraph.js";
+// import { LGraphCanvas } from "../lgraphcanvas.js";
 
 
 LiteGraph.showCanvasOptions = true; // [true!] customize availableCanvasOptions

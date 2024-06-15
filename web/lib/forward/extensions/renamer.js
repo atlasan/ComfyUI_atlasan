@@ -1,3 +1,4 @@
+// import { LiteGraph } from "../litegraph.js";
 
 if(LiteGraph && graphcanvas) (function(){
 
@@ -71,4 +72,4 @@ if(LiteGraph && graphcanvas) (function(){
         }
     });
 
-})();
+})(); else console.warn("no LiteGraph or graphcanvas");

@@ -1,4 +1,4 @@
-import { LiteGraph } from "../litegraph.js";
+// import { LiteGraph } from "../litegraph.js";
 
 if(LiteGraph && graphcanvas){
 
@@ -12,7 +12,6 @@ if(LiteGraph && graphcanvas){
     // onKeyDown
     graphcanvas.registerCallbackHandler("onKeyDown",function(oCbInfo, keyEvent){
         console.info(ext, "*** onKeyDown handler ***",...arguments);
-
         let nSel = Object.keys(graphcanvas.selected_nodes).length;
         var aNodesFrom = [];
         var nodeX = false;
@@ -143,4 +142,4 @@ if(LiteGraph && graphcanvas){
         };
     });
 
-}
+} else console.warn("no LiteGraph or graphcanvas");
