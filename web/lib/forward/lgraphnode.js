@@ -2672,6 +2672,7 @@ export class LGraphNode {
             let hasChangedIndex = false;
             let foundInSource = false;
             ob_from.forEach((sourceInput, sourceIndex) => {
+                if(foundInSource) return;
                 if(sourceUsedIds.includes(sourceIndex)){
                     LiteGraph.log_verbose("syncObjectByProperty", "skip used slot", sourceInput, sourceIndex);
                 }else if(sourceInput[property] === destInput[property]){
@@ -2705,6 +2706,7 @@ export class LGraphNode {
         ob_from.forEach((sourceInput, sourceIndex) => {
             let foundInDest = false;
             ob_dest.forEach((destInput, destIndex) => {
+                if(foundInDest) return;
                 if(destUsedIds.includes(destIndex)){
                     LiteGraph.log_verbose("syncObjectByProperty", "only_in_source", "skip checked slot", sourceInput, sourceIndex);
                 }else if(sourceInput[property] === destInput[property]){
