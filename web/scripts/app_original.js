@@ -1,4 +1,6 @@
 import { ComfyLogging } from "./logging.js";
+// import { LiteGraph } from "./lib/forward/litegraph.js";
+// import { LGraphCanvas } from "./lib/forward/lgraphcanvas.js";
 import { ComfyWidgets, initWidgets } from "./widgets.js";
 import { ComfyUI, $el } from "./ui.js";
 import { api } from "./api.js";
@@ -1052,12 +1054,8 @@ export class ComfyApp {
 	 */
 	#addProcessKeyHandler() {
 		const self = this;
-		if(!self.graph){
-			console.warn("APPGraph not ready");
-			return;
-		}
-		const canvas = self.graph.list_of_graphcanvas[0];
-		canvas.registerCallbackHandler("onKeyDown",function(oCbInfo, e){
+		const origProcessKey = LGraphCanvas.prototype.processKey;
+		LGraphCanvas.prototype.processKey = function(e) {
 			if (!this.graph) {
 				return;
 			}
@@ -1140,14 +1138,12 @@ export class ComfyApp {
 			if (block_default) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
-				return {
-					return_value: false,
-					prevent_default: true,
-					stop_replication: true
-				};
+				return false;
 			}
 
-		});
+			// Fall through to Litegraph defaults
+			return origProcessKey.apply(this, arguments);
+		};
 	}
 
 	/**
@@ -1538,19 +1534,17 @@ export class ComfyApp {
 
 		addDomClippingSetting();
 		this.#addProcessMouseHandler();
+		this.#addProcessKeyHandler();
 		this.#addConfigureHandler();
 		this.#addApiUpdateHandlers();
 		this.#addRestoreWorkflowView();
-		
+
 		this.graph = new LGraph();
-		
+
 		this.#addAfterConfigureHandler();
-		
+
 		const canvas = (this.canvas = new LGraphCanvas(canvasEl, this.graph));
 		this.ctx = canvasEl.getContext("2d");
-		
-		// when canvas is ready register CBHandlers
-		this.#addProcessKeyHandler();
 
 		LiteGraph.release_link_on_empty_shows_menu = true;
 		LiteGraph.alt_drag_do_clone_nodes = true;

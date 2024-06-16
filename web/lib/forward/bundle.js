@@ -34,17 +34,6 @@ script.textContent = `
         console.error('Failed to load extensions:', err);
     });
 
-    // Function to set config defaults
-    function loadDefaults() {
-        return import('./lib/forward/defaults_debug.js');
-    }
-    // set config defaults
-    loadDefaults().then(() => {
-        console.log('Configs set successfully');
-    }).catch(err => {
-        console.error('Failed to set config:', err);
-    });
-    
     // Export as ES6 module
     export { LiteGraph, LGraph, LLink, LGraphNode, LGraphGroup, DragAndScale, LGraphCanvas, ContextMenu };
 

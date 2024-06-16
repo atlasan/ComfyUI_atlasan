@@ -171,21 +171,22 @@ const elementWidgets = new Set();
 const computeVisibleNodes = LGraphCanvas.prototype.computeVisibleNodes;
 LGraphCanvas.prototype.computeVisibleNodes = function () {
 	const visibleNodes = computeVisibleNodes.apply(this, arguments);
-	for (const node of app.graph._nodes) {
-		if (elementWidgets.has(node)) {
-			const hidden = visibleNodes.indexOf(node) === -1;
-			for (const w of node.widgets) {
-				if (w.element) {
-					w.element.hidden = hidden;
-					w.element.style.display = hidden ? "none" : undefined;
-					if (hidden) {
-						w.options.onHide?.(w);
+	if(app.graph){
+		for (const node of app.graph._nodes) {
+			if (elementWidgets.has(node)) {
+				const hidden = visibleNodes.indexOf(node) === -1;
+				for (const w of node.widgets) {
+					if (w.element) {
+						w.element.hidden = hidden;
+						w.element.style.display = hidden ? "none" : undefined;
+						if (hidden) {
+							w.options.onHide?.(w);
+						}
 					}
 				}
 			}
 		}
 	}
-
 	return visibleNodes;
 };
 

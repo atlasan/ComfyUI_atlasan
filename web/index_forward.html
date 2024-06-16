@@ -15,7 +15,6 @@
 		<!-- <script type="module" src="./lib/forward/litegraph.js"></script> -->
 		<!-- <script type="module" src="./lib/forward/lgraphcanvas.js"></script> -->
 		<!-- <script type="module" src="./lib/forward/litegraph-editor.js"></script> -->
-		<script src="./lib/forward/defaults_debug.js"></script>
 		
 		<!-- <script type="module" src="./lib/forward/nodes/base.js"></script> -->
 		<!-- <script type="module" src="./lib/forward/nodes/logic.js"></script> -->
@@ -39,18 +38,56 @@
 		<!-- <script type="module" src="js/code.js"></script> -->
 
 		<script type="module">
-			import { LiteGraph } from "./lib/forward/litegraph.js";
-			import { LGraphCanvas } from "./lib/forward/lgraphcanvas.js";
-			window.LiteGraph = LiteGraph;
-			window.LGraphCanvas = LGraphCanvas;
 			import { app } from "./scripts/app.js";
-
+			
 			await app.setup();
 			window.app = app;
 			window.graph = app.graph;
+			if(app.graph.list_of_graphcanvas.length){
+				window.graphcanvas = app.graph.list_of_graphcanvas[0];
+			}else{
+				console.warn("Failed to load graphcanvas!");
+			}
+
+			// set LG config defaults
+			function loadDefaults() {
+				return import('./lib/forward/defaults_debug.js');
+			}
+			loadDefaults().then(() => {
+				console.log('LG Configs set successfully');
+			}).catch(err => {
+				console.error('Failed to set LG config:', err);
+			});
+
+			// load LG extensions
+			function dynamicallyLoadScript(url) {
+				return new Promise((resolve, reject) => {
+					var script = document.createElement("script");
+					script.src = url;
+					script.onload = () => resolve(url);
+					script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
+					document.head.appendChild(script);
+				});
+			}
+			async function loadScriptsSequentially(urls) {
+				for (const url of urls) {
+					try {
+						await dynamicallyLoadScript(url);
+						console.log(`Successfully loaded script: ${url}`);
+					} catch (error) {
+						console.error(error);
+					}
+				}
+			}
+			loadScriptsSequentially([	'./lib/forward/extensions/autoconnect.js'
+										,'./lib/forward/extensions/keyboard_helper.js'
+										,'./lib/forward/extensions/options_panel.js'
+										,'./lib/forward/extensions/renamer.js'
+									]);
+
 		</script>
 		
-		<!-- <script src="./lib/litegraph.extensions.js" defer></script> -->
+		<script src="./lib/litegraph.extensions.js" defer></script>
 		
 		<!-- <script type="module" src="./lib/forward/extensions/renamer.js"></script> -->
 		<!-- <script type="module" src="./lib/forward/extensions/autoconnect.js"></script> -->

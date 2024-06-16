@@ -1,20 +1,71 @@
 <!DOCTYPE html>
+<!-- THIS IS INDEX_FORWARD :: original is index_original -->
+<!-- current WIP working solution allowing default ComfyUI behaviors mixed with new LG es6 + mods, CBHandlers and LG extensions -->
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>ComfyUI</title>
+		<title>ComfyUI - FORWARD UI</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		<link rel="stylesheet" type="text/css" href="./lib/litegraph.css" />
+		<!-- <link rel="stylesheet" type="text/css" href="./lib/litegraph.css" /> -->
+		<link rel="stylesheet" type="text/css" href="./lib/atlasan/litegraph.atlasan.css" />
 		<link rel="stylesheet" type="text/css" href="./style.css" />
 		<link rel="stylesheet" type="text/css" href="./user.css" />
-		<script type="text/javascript" src="./lib/litegraph.core.js"></script>
-		<script type="text/javascript" src="./lib/litegraph.extensions.js" defer></script>
+		<!-- <script type="text/javascript" src="./lib/litegraph.core.js"></script> -->
+
+		<script src="./lib/forward/bundle.js"></script>
+
 		<script type="module">
 			import { app } from "./scripts/app.js";
+			
 			await app.setup();
 			window.app = app;
 			window.graph = app.graph;
+			if(app.graph.list_of_graphcanvas.length){
+				window.graphcanvas = app.graph.list_of_graphcanvas[0];
+			}else{
+				console.warn("Failed to load graphcanvas!");
+			}
+
+			// set LG config defaults
+			function loadDefaults() {
+				return import('./lib/forward/defaults_debug.js');
+			}
+			loadDefaults().then(() => {
+				console.log('LG Configs set successfully');
+			}).catch(err => {
+				console.error('Failed to set LG config:', err);
+			});
+
+			// load LG extensions
+			function dynamicallyLoadScript(url) {
+				return new Promise((resolve, reject) => {
+					var script = document.createElement("script");
+					script.src = url;
+					script.onload = () => resolve(url);
+					script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
+					document.head.appendChild(script);
+				});
+			}
+			async function loadScriptsSequentially(urls) {
+				for (const url of urls) {
+					try {
+						await dynamicallyLoadScript(url);
+						console.log(`Successfully loaded script: ${url}`);
+					} catch (error) {
+						console.error(error);
+					}
+				}
+			}
+			loadScriptsSequentially([	'./lib/forward/extensions/autoconnect.js'
+										,'./lib/forward/extensions/keyboard_helper.js'
+										,'./lib/forward/extensions/options_panel.js'
+										,'./lib/forward/extensions/renamer.js'
+									]);
+
 		</script>
+		
+		<script src="./lib/litegraph.extensions.js" defer></script>
+		
 	</head>
 	<body class="litegraph">
 		<div id="comfy-user-selection" class="comfy-user-selection" style="display: none;">
