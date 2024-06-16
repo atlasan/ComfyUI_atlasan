@@ -203,6 +203,12 @@ if __name__ == "__main__":
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
+
+    if args.web_directory:
+        web_dir = os.path.abspath(args.web_directory)
+        logging.info(f"Setting web directory to: {web_dir}")
+        folder_paths.set_web_directory(web_dir)
+
     server = server.PromptServer(loop)
     q = execution.PromptQueue(server)
 

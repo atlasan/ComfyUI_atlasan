@@ -38,6 +38,7 @@ output_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "ou
 temp_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "temp")
 input_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "input")
 user_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "user")
+web_directory = os.path.join(os.path.dirname(os.path.realpath(__file__)), "web")
 
 filename_list_cache = {}
 
@@ -59,6 +60,10 @@ def set_input_directory(input_dir):
     global input_directory
     input_directory = input_dir
 
+def set_web_directory(input_dir):
+    global web_directory
+    web_directory = input_dir
+
 def get_output_directory():
     global output_directory
     return output_directory
@@ -71,6 +76,9 @@ def get_input_directory():
     global input_directory
     return input_directory
 
+def get_web_directory():
+    global web_directory
+    return web_directory
 
 #NOTE: used in http server so don't put folders that should not be accessed remotely
 def get_directory_by_type(type_name):
