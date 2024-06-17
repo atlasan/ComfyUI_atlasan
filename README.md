@@ -1,3 +1,16 @@
+Testing and implementing ComfyUI with current rework of LiteGraph library
+
+Features have been added and code reworked, looking forward to clean, better organize and let more and better extensions works together.
+
+The LiteGraph branch implemented is here: [forwardcompatible](https://github.com/daniel-lewis-ab/litegraph.js/tree/forwardcompatible)
+
+A different web directoy has been used to progressively test and convert existing code while keeping things working.
+
+Try it by launching ComfyUI with ```--web-directory web_alpha```
+
+
+=======
+
 ComfyUI
 =======
 The most powerful and modular stable diffusion GUI and backend.
